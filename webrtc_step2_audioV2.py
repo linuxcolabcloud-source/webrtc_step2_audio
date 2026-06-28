@@ -686,7 +686,20 @@ pip install -q aiortc aiohttp av numpy
 """
 
 def setup_display():
-    """Khởi động Xvfb + Xfce4 + PulseAudio"""
+    """Cài + khởi động Xvfb + Xfce4 + PulseAudio"""
+    print("[i] Cài packages màn hình...")
+    subprocess.run([
+        "apt-get", "install", "-y", "-qq",
+        "xvfb", "x11-xserver-utils",
+        "xfce4", "xfce4-terminal", "xfce4-goodies",
+        "dbus-x11",
+        "pulseaudio", "alsa-utils",
+        "xdotool", "xclip", "ffmpeg",
+        "mesa-utils", "libglu1-mesa",
+        "fonts-dejavu",
+    ], capture_output=True)
+    print("[✓] Packages đã cài")
+
     print("[i] Khởi động màn hình ảo...")
 
     # Kill cũ nếu có
@@ -703,6 +716,15 @@ def setup_display():
     time.sleep(3)
 
     env = {**os.environ, "DISPLAY": ":99"}
+
+    # dbus
+    subprocess.Popen(
+        ["dbus-launch", "--sh-syntax"],
+        env=env,
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL
+    )
+    time.sleep(1)
 
     # Xfce4
     subprocess.Popen(
